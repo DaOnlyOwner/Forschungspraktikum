@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "configurations": [
+        {
+            "name": "Debug ANTLR4 grammar",
+            "type": "antlr-debug",
+            "request": "launch",
+            "input": "../../../../textgenerator/expression_lists/expression_50KB.txt",
+            "grammar": "expressions.g4",
+            "startRule": "start",
+            "printParseTree": false,
+            "visualParseTree": true
+        }
+    ]
+}
