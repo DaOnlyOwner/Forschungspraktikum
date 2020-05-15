@@ -1,0 +1,55 @@
+\section{Antlr4}
+Antlr4 (Akronym für \textbf{AN}nother \textbf{T}ool for \textbf{L}anguage \textbf{R}ecognition)
+ist ein Parsergenerator...
+\subsection{Akzeptierte Grammatik}
+Antlr4 verwendet eine neuartige Parsing Strategie (ALL(*) genannt), die es erlaubt alle nicht linksrekursiven, kontextfreien Grammatiken zu akzeptieren.
+Eine Grammatik wird in erweiterter Backus-Nauer Form definiert, welche dann von Antlr4 auf Fehler überprüft wird. Dabei kann die eingegebene Grammatik direkt linksrekursiv sein,
+intern wird jedoch jegliche direkte Linksrekursion durch Umschreiben eliminiert. Dadurch können Parser für weitaus mehr Grammatiken generiert werden als für Parsing Techniken, 
+die auf Token Lookaheads angewiesen sind. (LR(k), LL(k) etc.). Dies hat zur Konsequenz, dass der Algorithmus eine worst-case Zeitkomplexität von $O(n^4)$ aufweist. 
+In \ref{Antlr4_Report} wird jedoch darauf hingewiesen, dass diese obere Schranke in der Praxis häufig nicht erreicht wird und nur von theoretischer Interesse ist. 
+Der Autor des Berichts macht klar, dass ALL(*) um ein vielfaches schneller ist als vergleichbare Algorithmen wie z.B. Generalized LR Parsing, welches alle kontextfreien
+Grammatiken akzeptiert und in $O(n^3)$ \ref{Elkhound_Report} Eingaben parsen kann. In dieser Arbeit wird auf GLR Parsing in Abschnitt \ref{DParser} separat eingegangen und auch 
+ein Vergleich mit ALL(*) wird angestellt, um diese Behauptung unabhängig und speziell für die \textit{C++} Version verifizieren zu können.\\
+Im Folgenden soll die Funktionsweise von ALL(*) erläutert werden. 
+\subsection{Funktionsweise}
+Antlr4 erzeugt auf rekursivem Abstieg basierende Parser (die Idee des rekursiven Abstiegs wird in Abschnitt \ref{CocoR} erklärt). Während die meisten gängigen Parsingstrategien darauf angewiesen sind
+statisch, d.h. vor der Erzeugung des Parsers, Lookahead Tokenmengen zu konstruieren (Parser für LL(k), LR(k) Grammatiken zum Beispiel) verschiebt ALL(*) diese Analyse auf die Laufzeit. 
+Am besten ist der Algorithmus an einem Beispiel erklärt. 
+Man betrachte dazu Grammatik \ref{lst:expr_grammar} (eine vereinfachte Version von der in \ref{Antlr4_Report} vorgestellten). 
+
+\begin{lstlisting}[style=grammar, label=lst:expr_grammar]
+    stmt -> expr '=' expr ';' | expr ';'
+    expr -> expr '*' expr | expr '(' expr ')' | ID
+\end{lstlisting}
+
+Ein Predictive Parser für \textit{stmt} entscheidet basierend auf der Lookahead Tokenmenge ${'='}$ und ${';'}$, ob nach dem Parsen von expr, die linke oder die rechte Alternative
+als nächstes \textcolor{red}{erkannt (besseres Wort für Parsen??)} werden muss, unter der Annahme, dass \textit{expr} von diesem ebenso geparst werden kann.
+Antlr4 generiert ähnlichen Code für \textit{stmt}, siehe dafür Listing \ref{lst:stmt}.
+Die Funktion \textit{adaptivePredict} empfängt als Parameter das aktuelle Nichtterminal und den Callstack und bestimmt die zu parsende Alternative.
+Hierzu wird inkrementell ein deterministischer endlicher Automat gebaut, welcher die Lookahead Tokenmenge repräsentiert. 
+Die Konstruktion soll gleich erklärt werden, zuerst ist es wichtig ein Verständnis für die Funktionsweise des DEAs zu bekommen. 
+Die richtige Produktion wird berechnet, indem vom Startzustand ausgehend die Ausführung des DEAs simuliert wird. Dieser erhält als Eingabe die noch zu parsenden Zeichen, d.h. die Terminale, die man noch vorausschauen kann.
+Die Zustandsübergänge sind mit möglichen Lookahead Terminalen beschriftet. Akzeptierende Zustände verweisen eindeutig auf die zu parsende Produktion. Pfade vom Startzustand zu einem Endzustand
+geben daher ebenso eindeutig die Terminalfolge an, welche als Vorausschaumenge in der Eingabe enthalten sein muss, damit die entsprechende Produktion genommen wird. 
+Man betrachte als Beispiel Abbildung \ref{img:pred_dea} (b) und nehme weiterhin an, dass die Eingabe $a=b(x);$ sei. 
+Die Funktion \textit{adaptivePredict} simuliert die Ausführung des DEAs: $a$ ist ein Identifier und man wechselt in den Zustand $s_1$. Das nächste Zeichen ist ein $=$, also 
+wird in Zustand $:1$ gewechselt, welcher als akzeptierender Zustand signalisiert, dass die erste Produktion genommen werden soll (siehe hierfür Listing \ref{lst:stmt}). 
+Analog wird auch beim Parsen von $b(x)$ vorgegangen.\\
+Nun soll die Konstruktion erläutert werden, dazu wird ein Eingabestring von $x=y$ angenommen.
+Beim ersten Aufruf von \textit{adaptivePredict} für ein Nonterminal wird der zugehörige DEA mit einem Startzustand initialisiert. 
+Nun werden alle alternativen Produktionen nacheinander (im Gleichschritt sozusagen) pseudoparallel geparst.
+Das heißt zuerst wird versucht für die alternative Produktion 1 ($stmt -> expr '=' expr ';'$) \textit{expr} zu erkennen. 
+\textcolor{red}{hier weiter}  
+
+
+\begin{lstlisting}[style=CStyle, frame=b, caption=Code zum Erkennen von stmt,label=lst:stmt]   
+void stmt () { 
+    switch ( adaptivePredict ("stmt", call stack)) {
+        case 1: expr(); match('='); expr(); match (';'); break;
+        case 2: expr(); match (';'); break;
+    }   
+}
+\end{lstlisting}
+
+
+

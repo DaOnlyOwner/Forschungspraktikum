@@ -15,7 +15,7 @@ add_subdirectory(generators/ANTLR4/runtime) # Add the runtime.
 add_executable(parser_gen_comparsion ${FILES} ${ANTLR4_GEN_SRC})
 set_target_properties(parser_gen_comparsion PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(parser_gen_comparsion PUBLIC cxx_std_17)
-target_compile_definitions(parser_gen_comparsion PUBLIC EXPR_RES=\"${CMAKE_SOURCE_DIR}/textgenerator/expression_lists/\")
+target_compile_definitions(parser_gen_comparsion PUBLIC INPUT_RES=\"${CMAKE_SOURCE_DIR}/textgenerator/\")
 
 #Link to the runtime libraries:
 target_link_libraries(parser_gen_comparsion PRIVATE antlr4_shared)

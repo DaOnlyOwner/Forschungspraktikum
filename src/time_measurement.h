@@ -20,6 +20,4 @@ namespace timing
 	}
 
 	void measure_expressions();
-
-
 }

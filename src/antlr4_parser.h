@@ -26,30 +26,34 @@ class antlr4_parser : public base_parser
 public:
 	// Geerbt über base_parser
 	antlr4_parser(){}
-	virtual bool parse() override
+	virtual void* parse() override
 	{
 		assert(parser_vars != nullptr);
 		auto& interpreter = *parser_vars->parser.getInterpreter<antlr4::atn::ParserATNSimulator>();
 		interpreter.setPredictionMode(antlr4::atn::PredictionMode::SLL);
 		parser_vars->parser.setErrorHandler(bail_strat);
-		
-#ifndef NDEBUG
-		auto diag = std::make_unique<antlr4::DiagnosticErrorListener>();
-		parser_vars->parser.addErrorListener(diag.get());
-#endif
 
 		try {
-			parser_vars->parser.start();  // SLL
+			auto tree = parser_vars->parser.start();  // SLL
+			return (void*)tree;
 		}
 
-		catch (std::exception& ex) {
+		catch (antlr4::ParseCancellationException& ex) {
+			try
+			{
 #ifndef NDEBUG
-			printf("Grammar \"%s\" is not SLL(k). Switching to ALL(*).\n", parser_vars->parser.getGrammarFileName().c_str());
+				printf("Input triggered non SLL(k) alternative in grammar \"%s\". Switching to ALL(*).\n", parser_vars->parser.getGrammarFileName().c_str());
 #endif
-			reset_state_inner();
-			parser_vars->parser.start();  
+				reset_state_inner();
+				auto tree = parser_vars->parser.start();
+				return tree;
+			}
+			catch (std::exception& ex)
+			{
+				return nullptr;
+			}
 		}
-		return true;
+		return nullptr;
 	}
 
 	virtual void reset_stream(const std::string& filename) override
