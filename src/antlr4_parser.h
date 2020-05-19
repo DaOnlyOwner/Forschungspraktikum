@@ -29,7 +29,7 @@ public:
 	virtual void* parse() override
 	{
 		assert(parser_vars != nullptr);
-		auto& interpreter = *parser_vars->parser.getInterpreter<antlr4::atn::ParserATNSimulator>();
+		auto& interpreter = *parser_vars->parser.template getInterpreter<antlr4::atn::ParserATNSimulator>();
 		interpreter.setPredictionMode(antlr4::atn::PredictionMode::SLL);
 		parser_vars->parser.setErrorHandler(bail_strat);
 
@@ -73,7 +73,7 @@ private:
 		parser_vars->parser.setErrorHandler(default_strat);
 		parser_vars->token_stream.reset();
 		parser_vars->parser.reset();
-		auto& interpreter = *parser_vars->parser.getInterpreter<antlr4::atn::ParserATNSimulator>();
+		auto& interpreter = *parser_vars->parser.template getInterpreter<antlr4::atn::ParserATNSimulator>();
 		interpreter.setPredictionMode(antlr4::atn::PredictionMode::LL);
 	}
 
