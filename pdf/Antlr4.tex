@@ -35,8 +35,9 @@ Man betrachte als Beispiel Abbildung \ref{img:pred_dea} (b) und nehme weiterhin 
 Die Funktion \textit{adaptivePredict} simuliert die Ausführung des DEAs: $a$ ist ein Identifier und man wechselt in den Zustand $s_1$. Das nächste Zeichen ist ein $=$, also 
 wird in Zustand $:1$ gewechselt, welcher als akzeptierender Zustand signalisiert, dass die erste Produktion genommen werden soll (siehe hierfür Listing \ref{lst:stmt}). 
 Analog wird auch beim Parsen von $b(x)$ vorgegangen.\\
-Nun soll die Konstruktion erläutert werden, dazu wird ein Eingabestring von $x=y$ angenommen.
-Beim ersten Aufruf von \textit{adaptivePredict} für ein Nonterminal wird der zugehörige DEA mit einem Startzustand initialisiert. 
+Nun soll die Konstruktion erläutert werden. 
+Beim ersten Aufruf von \textit{adaptivePredict} für ein Nonterminal mit alternativen Produktionen wird der zugehörige DEA mit einem Startzustand initialisiert. 
+Ausgehend von diesem Startzustand wird nun jede alternative Produktion (pseudo)parallel analysiert.   
 Nun werden alle alternativen Produktionen nacheinander (im Gleichschritt sozusagen) pseudoparallel geparst.
 Das heißt zuerst wird versucht für die alternative Produktion 1 ($stmt -> expr '=' expr ';'$) \textit{expr} zu erkennen. 
 \textcolor{red}{hier weiter}  
