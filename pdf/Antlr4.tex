@@ -28,16 +28,21 @@ Antlr4 generiert ähnlichen Code für \textit{stmt}, siehe dafür Listing \ref{l
 Die Funktion \textit{adaptivePredict} empfängt als Parameter das aktuelle Nichtterminal und den Callstack und bestimmt die zu parsende Alternative.
 Hierzu wird inkrementell ein deterministischer endlicher Automat gebaut, welcher die Lookahead Tokenmenge repräsentiert. 
 Die Konstruktion soll gleich erklärt werden, zuerst ist es wichtig ein Verständnis für die Funktionsweise des DEAs zu bekommen. 
-Die richtige Produktion wird berechnet, indem vom Startzustand ausgehend die Ausführung des DEAs simuliert wird. Dieser erhält als Eingabe die noch zu parsenden Zeichen, d.h. die Terminale, die man noch vorausschauen kann.
-Die Zustandsübergänge sind mit möglichen Lookahead Terminalen beschriftet. Akzeptierende Zustände verweisen eindeutig auf die zu parsende Produktion. Pfade vom Startzustand zu einem Endzustand
-geben daher ebenso eindeutig die Terminalfolge an, welche als Vorausschaumenge in der Eingabe enthalten sein muss, damit die entsprechende Produktion genommen wird. 
+Die richtige Produktion wird berechnet, indem vom Startzustand ausgehend die Ausführung des DEAs simuliert wird. 
+Dieser erhält als Eingabe die noch zu parsenden Zeichen, d.h. die Terminale, die man noch vorausschauen kann.
+Die Zustandsübergänge sind mit möglichen Lookahead Terminalen beschriftet. 
+Akzeptierende Zustände verweisen eindeutig auf die zu parsende Produktion. 
+Pfade vom Startzustand zu einem Endzustand geben daher ebenso eindeutig die Terminalfolge an,
+welche als Vorausschaumenge in der Eingabe enthalten sein muss, damit die entsprechende Produktion genommen wird. 
 Man betrachte als Beispiel Abbildung \ref{img:pred_dea} (b) und nehme weiterhin an, dass die Eingabe $a=b(x);$ sei. 
 Die Funktion \textit{adaptivePredict} simuliert die Ausführung des DEAs: $a$ ist ein Identifier und man wechselt in den Zustand $s_1$. Das nächste Zeichen ist ein $=$, also 
 wird in Zustand $:1$ gewechselt, welcher als akzeptierender Zustand signalisiert, dass die erste Produktion genommen werden soll (siehe hierfür Listing \ref{lst:stmt}). 
 Analog wird auch beim Parsen von $b(x)$ vorgegangen.\\
-Nun soll die Konstruktion erläutert werden. 
-Beim ersten Aufruf von \textit{adaptivePredict} für ein Nonterminal mit alternativen Produktionen wird der zugehörige DEA mit einem Startzustand initialisiert. 
-Ausgehend von diesem Startzustand wird nun jede alternative Produktion (pseudo)parallel analysiert.   
+Nun soll die Konstruktion konzeptuell erläutert werden. 
+Wenn die Simulation des DEAs bei irgendeinem Zustand abbrechen muss, weil für das nächste Eingabesymbol kein Übergang existiert,
+wird 
+
+
 Nun werden alle alternativen Produktionen nacheinander (im Gleichschritt sozusagen) pseudoparallel geparst.
 Das heißt zuerst wird versucht für die alternative Produktion 1 ($stmt -> expr '=' expr ';'$) \textit{expr} zu erkennen. 
 \textcolor{red}{hier weiter}  
