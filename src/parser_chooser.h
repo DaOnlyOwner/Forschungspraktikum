@@ -5,7 +5,9 @@
 
 enum class GrammarType
 {
-	Expression
+	Expression,
+	EBNF,
+	HTML
 };
 
 enum class Generator

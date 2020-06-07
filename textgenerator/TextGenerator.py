@@ -15,11 +15,14 @@ spec_grammar = r"""
 %import common.ESCAPED_STRING
 %ignore WS
 %ignore COMMENT
+_STRING_INNER2: /.*?/
+_STRING_ESC_INNER2: _STRING_INNER2 /(?<!\\)(\\\\)*?/ 
+ESCAPED_STRING2 : "'" _STRING_ESC_INNER2 "'"
 RULE_NAME : WORD ("_" WORD)*
 COMMENT : "-" /[^\n]/*
 FLOAT : NUMBER ("." NUMBER)?
 OP : "+" | "*" | "?"
-IDENT : RULE_NAME | ESCAPED_STRING
+IDENT : RULE_NAME | ESCAPED_STRING | ESCAPED_STRING2 
 start : rule*
 rule: RULE_NAME ":" rule_expr ";"
 weights_branch : "#" FLOAT ("," FLOAT)?
@@ -276,7 +279,9 @@ class MakeAst(lark.Transformer):
             self.current_col = items[0].column
             txt = str(items[0])
             if txt.startswith('"'):
-                return TerminalExpr(txt.replace('"',"").replace("\\n",os.linesep))
+                return TerminalExpr(txt[1:-1].replace("\\n",os.linesep).replace("\\",""))
+            elif txt.startswith("'"):
+                return TerminalExpr(txt[1:-1].replace("\\n",os.linesep).replace("\\","") + " ")
             return RuleExpr(txt,self.rule_list,items[0].line,items[0].column)
         items[0].parenthesised = True # ( expr )
         return items[0]
@@ -419,7 +424,6 @@ def main():
     if res == None: return -1
     txt = start_textgen(res,std_factor)
     if txt == None: return -1
-
     try:
         write_file(txt,filenameOut)
     except OSError as e:

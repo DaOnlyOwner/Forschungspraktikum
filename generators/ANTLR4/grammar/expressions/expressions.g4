@@ -16,7 +16,7 @@ expr : expr '::' expr #scope_expr
 | '~' expr #bit_flip_expr
 | '!' expr #logical_neg_expr
 | '*' expr #pointer_deref_expr
-|'&' expr #pointer__expr
+| '&' expr #pointer__expr
 | expr '*' expr #mul_expr
 | expr '/' expr #div_expr
 | expr '%' expr #mod_expr

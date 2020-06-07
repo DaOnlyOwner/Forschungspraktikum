@@ -4,7 +4,7 @@
 namespace timing
 {
 	template<typename FnParse, typename FnReset>
-	double measure(FnParse parse, FnReset reset, int sample_amount = 1000) // the weighted average of 100 times
+	double measure(FnParse parse, FnReset reset, int sample_amount = 1000) // the weighted average of 1000 times
 	{
 		double sum = 0;
 		for (int i = 0; i < sample_amount; i++)
@@ -20,4 +20,5 @@ namespace timing
 	}
 
 	void measure_expressions();
+	void measure_ebnf();
 }
