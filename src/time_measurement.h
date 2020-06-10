@@ -21,4 +21,5 @@ namespace timing
 
 	void measure_expressions();
 	void measure_ebnf();
+	void measure_semantic_actions();
 }

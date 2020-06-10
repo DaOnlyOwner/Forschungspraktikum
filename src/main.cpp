@@ -2,6 +2,7 @@
 
 int main(int argc, char* argv[])
 {
-	timing::measure_expressions();
+	//timing::measure_expressions();
 	//timing::measure_ebnf();
+	timing::measure_semantic_actions();
 }

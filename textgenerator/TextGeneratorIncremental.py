@@ -54,7 +54,7 @@ def incr_text_gen(res, start, stop_after_kb,margin=0.1,threshold=100,std_factor=
 
                 txt = tg.start_textgen(res,std_factor)
                 if txt == None: return []
-                is_size = len(txt) / 1000.0
+                is_size = len(txt.encode('utf-8')) / 1000.0
                 #print("Gened size:", is_size)
                 iteration_result.append(int(is_size<must_size))
 
@@ -85,9 +85,9 @@ def main():
 
     res = tg.gen_parse_result(filenameIn)
     if res == []: return -1
-    start = 500
-    stop = 550
-    margin_ = 0.499999
+    start = 1
+    stop = 100
+    margin_ = 0.2
     threshold_ = 25
     std_factor_ = 0.407
     base_increase_ = 0.0005
